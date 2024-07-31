@@ -12,7 +12,6 @@ authors = [
 ]
 
 readme = "README.md"
-license = "LICENSE.md"
 requires-python = ">=3.11"
 dependencies = [
 	"auto_all >= 1.4.1",
@@ -20,6 +19,7 @@ dependencies = [
 ]
 classifiers = [
 	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: MIT License",
 	"Operating System :: OS Independent"
 ]
 
