@@ -25,9 +25,9 @@ UnknownData     = Any
 start_all()
 
 try:
-    from .property import *
+    from .properties import *
 except ImportError as e:
-    from propertyplus.property import *
+    from propertyplus.properties import *
 
 try:
     from .string_properties import *

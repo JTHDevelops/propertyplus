@@ -4,6 +4,8 @@ from typing_extensions import TypeVar
 
 from auto_all import start_all, end_all
 
+start_all()
+
 ValidType       = TypeVar('ValidType')
 InvalidType     = TypeVar('InvalidType')
 ValidValue      = TypeVar('ValidValue')
@@ -12,7 +14,7 @@ NormalizedData  = TypeVar('NormalizedData')
 UnstableData    = TypeVar('UnstableData')
 UnknownData     = TypeVar('UnknownData')
 
-start_all()
+
 class Property(property):
     '''
     Property(...) -> property attribute.
@@ -401,7 +403,7 @@ class Property(property):
             Called at the end of __init__ and each decorator function.
         '''
         docstr  = self.docs if self.docs is not None else ''    
-        types   = '' if self.types   is None else f":    Type-Restricted: {', '.join([T.__name__ for T in self.types])}"
+        types   = '' if self.types   is None else f":    Type-Restricted: {', '.join([T.__qualname__ if T.__module__ == 'builtins' else f'{T.__module__}.{T.__qualname__}' for T in self.types])}"
         default = '' if self.default is None else f':      default value: {self.default}'
         docf = getattr(self.fget, '__doc__', '')
         docs = getattr(self.fset, '__doc__', '')
