@@ -337,5 +337,5 @@ class Example:
     def shared(self) -> Optional[str]:
         '''A shared property'''
     
-help(Example)
-help(Property)
+#help(Example)
+#help(Property)
