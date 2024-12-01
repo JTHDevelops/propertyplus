@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PropertyPlus"
-version = "1.0.9"
+version = "1.0.10"
 description = """A heavily improved subclass of the `property` descriptor, plus more."""
 authors = [
 	{name="J.T. Hartzfeld", email="J.T.Hartzfeld@jthdevelops.com"}
