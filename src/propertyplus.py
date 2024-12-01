@@ -60,28 +60,29 @@ class Property(property):
         '''Create a new Property instance.'''
         return super().__new__(cls)
     
-    def _is_unsettable(self, unsettable=None):
-        # This is probably overly-spaghettified, but I'm too damned lazy to fix it.
-        # TODO: Clean this up, iff you want to.
-        if self.types is None or unsettable or self._unsettable: return True
-        if isinstance(self.types, tuple):
-            if self.default is None or None in self.types:
-                return True
-        return False
-    
     def _set_types(self, types):
         ''''''
         if isinstance(types, type):
-            self.types = (types,)
+            types = (types,)
         if types is None or isinstance(types, tuple):
             self.types = types
         elif isinstance(types, Iterable):
             if not sum([0 if isinstance(t, (type, NoneType)) else 1 for t in types]):
                 self.types = tuple(types)
         if isinstance(self.types, tuple):
-            self.types = tuple(set([NoneType if T is None else T for T in self.types]))
+            self.unsettable = True if self.default is None or None in self.types or NoneType in self.types or self._unsettable else False
+            self.types = tuple(set([NoneType if T is None else T for T in self.types]+[NoneType if self.default is None else self.types[0]]))
+            if not self.unsettable:
+                if NoneType in self.types:
+                    s = set(self.types)
+                    s.discard(NoneType)
+                    s.discard(None)
+                    self.types = tuple(s)
+
         else:
+            self.unsettable=True
             self.types=None
+        
         
     def __init__(
         self,
@@ -129,14 +130,9 @@ class Property(property):
         self.fdel = None if self.indelible else fdel if isinstance(fdel, Callable) else self.default_delete
         self.fdoc = fdoc if isinstance(fdoc, Callable) else None
         self.default = default
+        self._unsettable = unsettable                
         self._set_types(types)
-        
 
-
-
-        
-        self._unsettable = True if unsettable else False
-        self.unsettable = self._is_unsettable(self._unsettable)
         cachename = kwargs.get('cachename', cachename)
         if isinstance(cachename, str):
             self._name = cachename
@@ -229,22 +225,8 @@ class Property(property):
                             rt = (rt,)
                         if type(rt) == _UnionGenericAlias:
                             rt = rt.__args__
-                            
-                        if isinstance(rt, Iterable):
-                            if not isinstance(rt, tuple):
-                                rt =  tuple(rt)
-                        if not isinstance(rt, tuple):
-                            rt=None
-                        self._set_types(
-                            ((NoneType,) if self.types is None else self.types
-                                ) + ((NoneType,) if rt is None else rt))
+                        self._set_types(rt)
                         
-                        
-                        self.unsettable=self._is_unsettable()
-                        
-                        if self.unsettable and None not in self.types:
-                            self.types = self.types + (None,)
-                        self.types = tuple(set(self.types))
             break;
         self.gen__doc__()
         return self
